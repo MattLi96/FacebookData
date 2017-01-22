@@ -1,0 +1,5 @@
+# Place the contents of the facebook download here. Do not include the top level folder
+
+# Ignore everything except the .gitignore
+*
+!.gitignore
