@@ -3,3 +3,6 @@
 *.iml
 out
 gen
+
+# See readme for info on UidMap.py
+UidMap.py

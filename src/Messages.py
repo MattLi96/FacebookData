@@ -1,36 +1,42 @@
 """The data format to use to store messages"""
-import copy
 
 from TimeParser import parse_datetime
-from Username import *
-
-finder = UsernameFinder()
-
-
-# gets the username for a string
-def get_username(string):
-    return finder.get_username(extract_uid(string)) if "@facebook" in string else string
+from Username import get_username, finder
 
 
 # A complete log of all messages. Initializing this does final processing on a list of message threads.
 class MessageLog:
     def __init__(self, threads):
-        threads = copy.deepcopy(threads)  # deep copy the input list, mutations will be made to the elements
-        # convert facebook ids to username
-        # consolidate message threads by participants
-        # sort messages in each
-
+        initial_log = {}  # dictionary from participants to a list of corresponding threads
+        print("Cleaning up usernames")
         for p_thread in threads:
             thread = MessageThread(p_thread)
+            if thread.participants in initial_log:
+                initial_log[thread.participants].append(thread)
+            else:
+                initial_log[thread.participants] = [thread]
 
-        print(finder.uid_to_name)
-        print(finder.unknown)
+        # consolidate message threads by participants
+        print("Consolidating messages")
+        self.log = {}  # The full log, participants to messages
+        for p, m_threads in initial_log.items():
+            self.log[p] = [m for t in m_threads for m in t.messages]
+
+        # sort messages by time
+        for p, m_thread in self.log.items():
+            self.log[p] = sorted(m_thread, key=lambda message: message.date_time)
+
+        print("Unknown IDs:", finder.unknown)  # Printout the ids that were could not be found, must manually check
+
+    # Log is a dictionary from participants to a list of messages
+    def get_log(self):
+        return self.log
 
 
 # A set of messages between a group of participants
 class MessageThread:
     def __init__(self, parse_thread):
-        self.participants = {get_username(p) for p in parse_thread.participants}
+        self.participants = frozenset(get_username(p) for p in parse_thread.participants)
         self.messages = [Message(m) for m in parse_thread.messages]
 
 

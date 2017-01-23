@@ -1,8 +1,18 @@
 """Use for getting username from userid"""
+import copy
 import re
 
 import requests
 from bs4 import BeautifulSoup
+
+try:  # Try to import a UID_MAP, if one does not exist then simply set to default of empty
+    from UidMap import UID_MAP
+except ImportError:
+    UID_MAP = {}
+try:  # Try to import a NAME_MAP, if one does not exist then simply set to default of empty
+    from UidMap import NAME_MAP
+except ImportError:
+    NAME_MAP = {}
 
 
 # helper function to extract a uid when in the format uid@facebook.com (or whenever uid is just the starting numbers)
@@ -13,9 +23,7 @@ def extract_uid(string):
 class UsernameFinder:
     def __init__(self):
         # dictionary from uid to username, some id's have to be initialized
-        self.uid_to_name = {
-
-        }
+        self.uid_to_name = copy.copy(UID_MAP)
         self.unknown = set()  # uid we weren't able to get a username for
 
     # get the username from uid
@@ -33,3 +41,18 @@ class UsernameFinder:
             name = name_element.contents[0].strip()
         self.uid_to_name[uid] = name
         return name
+
+
+finder = UsernameFinder()
+nickname_to_name = {}
+for real_name, nicknames in NAME_MAP.items():
+    for nickname in nicknames:
+        nickname_to_name[nickname] = real_name
+
+
+# gets the username for a string
+def get_username(string):
+    name = finder.get_username(extract_uid(string)) if "@facebook" in string else string
+    if name in nickname_to_name:
+        return nickname_to_name[name]
+    return name
