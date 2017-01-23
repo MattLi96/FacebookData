@@ -1,6 +1,7 @@
 from html.parser import HTMLParser
 
-from Messages import *
+from Messages import MessageLog
+from ParseMessages import *
 
 
 # returns all the class attribute types
@@ -30,10 +31,10 @@ class MessageParser(HTMLParser):
             self.div_count += 1
             if "thread" in get_classes_attr(attrs):  # start of thread
                 print("Start Thread:", len(self.threads) + 1)  # useful to make sure the parser is actually running
-                self.thread = MessageThread()
+                self.thread = ParseMessageThread()
                 self.thread_div_count = self.div_count
             elif "message" in get_classes_attr(attrs):  # start of message
-                self.message = Message()
+                self.message = ParseMessage()
                 self.message_div_count = self.div_count
         elif tag == "span":
             if "user" in get_classes_attr(attrs):
@@ -68,3 +69,6 @@ class MessageParser(HTMLParser):
 
     def get_threads(self):
         return self.threads
+
+    def get_message_log(self):
+        return MessageLog(self.threads)
