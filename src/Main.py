@@ -2,7 +2,7 @@
 from Parser import MessageParser
 
 messages_data_file = "../data/html/messages.htm"
-processed_messages_file = "../out/message_log.txt"
+processed_messages_file = "../out/message_log"
 
 if __name__ == '__main__':
     file = open(messages_data_file, 'r', encoding="utf8")

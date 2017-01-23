@@ -1,5 +1,4 @@
 """The data format to use to store messages from parsing"""
-from TimeParser import parse_datetime
 
 
 class ParseMessageThread:

@@ -21,10 +21,11 @@ def extract_uid(string):
 
 
 class UsernameFinder:
-    def __init__(self):
+    def __init__(self, save_file="../out/newIds.txt"):
         # dictionary from uid to username, some id's have to be initialized
         self.uid_to_name = copy.copy(UID_MAP)
         self.unknown = set()  # uid we weren't able to get a username for
+        self.save_file = save_file  # file to save new id to username map to
 
     # get the username from uid
     def get_username(self, uid):
@@ -41,6 +42,15 @@ class UsernameFinder:
             name = name_element.contents[0].strip()
         self.uid_to_name[uid] = name
         return name
+
+    def save_new(self):
+        f = open(self.save_file, 'w')
+        for uid, name in self.uid_to_name.items():
+            if uid not in self.unknown and uid not in UID_MAP:
+                f.write("'" + str(uid) + "'")
+                f.write(":")
+                f.write("'" + name + "',\n")
+        f.close()
 
 
 finder = UsernameFinder()

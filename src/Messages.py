@@ -35,7 +35,8 @@ class MessageLog:
             self.log[p] = sorted(m_thread, key=lambda message: message.date_time)
 
         # Printout the ids that were could not be found, must manually check
-        print("Unknown IDs:", finder.unknown if finder.unknown else "None")
+        print("Unknown IDs:", len(finder.unknown), ":", finder.unknown if finder.unknown else "None")
+        finder.save_new()
 
     # Log is a dictionary from participants to a list of messages
     def get_logs(self, participants=None):
