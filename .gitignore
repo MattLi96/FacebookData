@@ -6,3 +6,6 @@ gen
 
 # See readme for info on UidMap.py
 UidMap.py
+
+# File with some personal information in it
+Personal.py

@@ -1,7 +1,15 @@
 """The data format to use to store messages"""
+import pickle
 
 from TimeParser import parse_datetime
 from Username import get_username, finder
+
+
+def load_message_log(file):
+    f = open(file, 'rb')
+    ret = pickle.load(f)
+    f.close()
+    return ret
 
 
 # A complete log of all messages. Initializing this does final processing on a list of message threads.
@@ -26,11 +34,19 @@ class MessageLog:
         for p, m_thread in self.log.items():
             self.log[p] = sorted(m_thread, key=lambda message: message.date_time)
 
-        print("Unknown IDs:", finder.unknown)  # Printout the ids that were could not be found, must manually check
+        # Printout the ids that were could not be found, must manually check
+        print("Unknown IDs:", finder.unknown if finder.unknown else "None")
 
     # Log is a dictionary from participants to a list of messages
-    def get_log(self):
+    def get_logs(self, participants=None):
+        if participants is not None:
+            return self.log[frozenset(participants)]
         return self.log
+
+    def save(self, file):
+        f = open(file, 'wb')
+        pickle.dump(self, f)
+        f.close()
 
 
 # A set of messages between a group of participants
